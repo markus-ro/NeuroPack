@@ -2,8 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause) [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)]() [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/) [![status: experimental](https://github.com/GIScience/badges/raw/master/status/experimental.svg)](https://github.com/GIScience/badges#experimental)
 
-Simple library to implement prototypes of brainwave-based authentication in Python. Further, it allows for the general usage of brainwave data in Python. I wrote this library as part of my master thesis. At the time of submission, the future of it and me was uncertain. However, I decided to publish it and provide some missing features I 
-would have liked to implement, but did not have the time to do so. If you come across this library and find it useful, feel free to use it and contribute if you like.
+Simple library to implement prototypes of brainwave-based authentication in Python. Further, it allows for the general usage of brainwave data in Python. I wrote this library as part of my master thesis. At the time of submission, the future of it was uncertain. Hence, I decided to publish it and provide some missing features. If you come across this library and find it useful, feel free to use it and contribute if you like.
 
 ## Installation
 To use NeuroPack, simply clone the repository and install the needed dependencies via pip:
