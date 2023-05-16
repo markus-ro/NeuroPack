@@ -90,6 +90,7 @@ class AudioTask(GraphicTaskBase):
         except Exception as e:
             print("Exception when trying to play sound with play_sounds library: ", e)
 
+
 class ProbabilisticAudioTask(AudioTask):
     def __init__(self,
                  target_p: float,

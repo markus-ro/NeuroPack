@@ -36,10 +36,12 @@ Examples of how to use the various components of the library can be found in:
 ## Todo
 The following list contains features I am planning to implement in the future:
 - [ ] Broader data file support
+- [ ] AudioTask truly multi platform
 - [ ] Live plotting of EEG data
 - [ ] Support for multiple event markers
 - [ ] Support for more EEG devices
-- [ ] Support for more elaborate artifact rejection
+- [X] Support for more elaborate artifact rejection
+- [ ] Tests for artifact rejection
 - [ ] Support for classifiers
 - [ ] Benchmarking framework
 - [ ] More examples
