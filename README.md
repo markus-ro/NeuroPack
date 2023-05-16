@@ -49,3 +49,6 @@ The following list contains features I am planning to implement in the future:
 - [ ] Change graphics backend of tasks
 - [ ] Benchmarking framework
 - [ ] More examples
+
+# References
+[1] O. E. Krigolson, C. C. Williams, A. Norton, C. D. Hassall, and F. L. Colino, “Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research,” Front. Neurosci., vol. 11, Mar. 2017, doi: 10.3389/fnins.2017.00109.
