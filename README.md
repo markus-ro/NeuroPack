@@ -45,5 +45,7 @@ The following list contains features I am planning to implement in the future:
 - [X] Support for more elaborate artifact rejection
 - [ ] Tests for artifact rejection
 - [ ] Support for classifiers
+- [ ] Representation learning based on siamese networks
+- [ ] Change graphics backend of tasks
 - [ ] Benchmarking framework
 - [ ] More examples
