@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.ndimage import shift
 
+
 class FastQueue():
     __slots__ = ["size", "data", "head", "__raw"]
 
@@ -17,7 +18,7 @@ class FastQueue():
         self.data = np.zeros(size, dtype=np.float32)
         self.head = -1
         self.__raw = None
-    
+
     def push(self, value: float) -> None:
         """Inserts an element at the end of the queue.
         If the queue is full, the first element is removed.
@@ -40,7 +41,7 @@ class FastQueue():
         value = self.data[0]
         self.__roll()
         return value
-    
+
     def raw(self) -> np.ndarray:
         """Returns the raw numpy array.
 
@@ -52,7 +53,7 @@ class FastQueue():
 
         if self.__raw is not None:
             return self.__raw
-        
+
         self.__raw = self.data[:self.head + 1]
         return self.__raw
 
@@ -72,7 +73,7 @@ class FastQueue():
         :rtype: int
         """
         return self.head + 1
-    
+
     def __getitem__(self, index: int) -> float:
         """Returns the element at the given index.
 

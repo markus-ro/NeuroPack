@@ -69,7 +69,7 @@ class AudioTask(GraphicTaskBase):
         """
         if not self.gui:
             return
-        
+
         super().set_up()
         self._panel = tk.Label(self._window, text=self.instructions)
         self._panel.config(bg="black", fg="white", font=("Arial", 64))
@@ -226,7 +226,7 @@ class PersistentAudioTask(PersistentTaskBase):
             self.early_stop)
         self.task.display_gui(self.gui)
         self.task.only_target_data(self.target_only)
-    
+
     def display_gui(self, b: bool) -> None:
         """Show or hide gui.
 
@@ -288,7 +288,7 @@ class PersistentProbabilisticAudioTask(PersistentTaskBase):
             self.early_stop)
         self.task.display_gui(self.gui)
         self.task.only_target_data(self.target_only)
-    
+
     def display_gui(self, b: bool) -> None:
         """Show or hide gui.
 

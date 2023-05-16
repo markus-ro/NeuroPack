@@ -1,8 +1,8 @@
 import copy
 import csv
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple, Union
 from multiprocessing import Process, Queue
+from typing import List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -700,12 +700,12 @@ class LiveEEGContainer(EEGContainer):
         """
         if self.p:
             return
-        
+
         self.queue = Queue()
         self.p = Process(target=self.vis)
         print("Starting visualization. Press Ctrl+C to stop.")
         self.p.start()
-    
+
     def stop_vis(self):
         """Stops the visualization of the data.
         """
@@ -713,29 +713,31 @@ class LiveEEGContainer(EEGContainer):
             self.queue.put(None)
             self.p.join()
             self.p = None
-        
+
         if self.queue:
             self.queue.close()
             self.queue = None
-    
+
     def vis(self):
         """Visualization process. This method is called in a separate process.
         Absolutly unoptimized, but works for debugging.
         """
         refresh_rate = self.sample_rate // 2
         x = FastQueue(self.sample_rate)
-        y = [FastQueue(self.sample_rate) for _ in range(len(self.channel_names))]
+        y = [FastQueue(self.sample_rate)
+             for _ in range(len(self.channel_names))]
         count = 0
         while True:
             count += 1
-            # TODO: This is not a good way to do this. We should use a proper event loop.
+            # TODO: This is not a good way to do this. We should use a proper
+            # event loop.
             rec = self.queue.get()
 
             # Stop the process if we get a None
             if rec is None:
                 break
 
-            # Add new data 
+            # Add new data
             x.push(rec.timestamp)
             for i in range(len(self.channel_names)):
                 y[i].push(rec.signals[i])

@@ -3,6 +3,7 @@ from typing import Any, List, Tuple, Union
 
 import numpy as np
 from numpy.typing import NDArray
+
 from .fast_queue import FastQueue
 
 
