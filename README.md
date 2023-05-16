@@ -36,8 +36,10 @@ Examples of how to use the various components of the library can be found in:
 ## Todo
 The following list contains features I am planning to implement in the future:
 - [ ] Broader data file support
-- [ ] AudioTask truly multi platform
-- [ ] Live plotting of EEG data
+- [X] AudioTask truly multi platform
+- [X] Invisible AudioTask
+- [X] Live plotting of EEG data
+- [ ] Optimize wear detection even more
 - [ ] Support for multiple event markers
 - [ ] Support for more EEG devices
 - [X] Support for more elaborate artifact rejection

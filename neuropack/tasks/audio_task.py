@@ -1,9 +1,13 @@
+import os
 import tkinter as tk
 from random import random
 from time import sleep, time
 from typing import Callable, List, Optional
 
-from play_sounds import play_file
+if os.name == "nt":
+    from playsound import playsound as play_file
+else:
+    from play_sounds import play_file
 
 from .base import PersistentTaskBase, StimuliTime
 from .base.graphic_task_base import GraphicTaskBase
@@ -56,12 +60,16 @@ class AudioTask(GraphicTaskBase):
         self.sound_path = sound_path
         self.target_sound_path = target_sound_path
         self.instructions = "Please listen to the played sounds."
+        self.gui = True
         if instructions:
             self.instructions = instructions
 
     def set_up(self) -> None:
         """Add label with instructions to listen to the sounds.
         """
+        if not self.gui:
+            return
+        
         super().set_up()
         self._panel = tk.Label(self._window, text=self.instructions)
         self._panel.config(bg="black", fg="white", font=("Arial", 64))
@@ -80,6 +88,14 @@ class AudioTask(GraphicTaskBase):
 
         # Wait till next change
         sleep(self._get_exposure_time())
+
+    def display_gui(self, b: bool) -> None:
+        """Show or hide gui.
+
+        :param b: True if target, else false.
+        :type b: bool
+        """
+        self.gui = b
 
     def play_sound(self, target: bool):
         self._send_stimulus_info(StimuliTime(time(), target))
@@ -194,6 +210,7 @@ class PersistentAudioTask(PersistentTaskBase):
         self.instructions = instructions
         self.stimuli_record = stimuli_record
         self.early_stop = early_stop
+        self.gui = True
 
     def create_task(self):
         """Create new instance of AudioTask using original parameters.
@@ -207,7 +224,18 @@ class PersistentAudioTask(PersistentTaskBase):
             self.instructions,
             self.stimuli_record,
             self.early_stop)
+        self.task.display_gui(self.gui)
         self.task.only_target_data(self.target_only)
+    
+    def display_gui(self, b: bool) -> None:
+        """Show or hide gui.
+
+        :param b: True if target, else false.
+        :type b: bool
+        """
+        self.gui = b
+        if self.task:
+            self.task.display_gui(b)
 
 
 class PersistentProbabilisticAudioTask(PersistentTaskBase):
@@ -245,6 +273,7 @@ class PersistentProbabilisticAudioTask(PersistentTaskBase):
         self.instructions = instructions
         self.stimuli_record = stimuli_record
         self.early_stop = early_stop
+        self.gui = True
 
     def create_task(self):
         """Create new instance of ProbabilisticAudioTask using original parameters.
@@ -257,4 +286,15 @@ class PersistentProbabilisticAudioTask(PersistentTaskBase):
             self.instructions,
             self.stimuli_record,
             self.early_stop)
+        self.task.display_gui(self.gui)
         self.task.only_target_data(self.target_only)
+    
+    def display_gui(self, b: bool) -> None:
+        """Show or hide gui.
+
+        :param b: True if target, else false.
+        :type b: bool
+        """
+        self.gui = b
+        if self.task:
+            self.task.display_gui(b)
