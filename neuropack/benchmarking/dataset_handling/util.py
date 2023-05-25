@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import numpy as np
 
-from ...container import EEGContainer, EventContainer
+from ...containers import EEGContainer, EventContainer
 from ...preprocessing import PreprocessingPipeline
 from ...utils import oavg
 from .benchmark_container import BenchmarkContainer

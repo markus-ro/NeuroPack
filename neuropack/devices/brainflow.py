@@ -5,8 +5,8 @@ from time import sleep, time
 from brainflow import BrainFlowError
 from brainflow.board_shim import BoardIds, BoardShim, BrainFlowInputParams
 
-from .base import BCISignal, DeviceBase
 from ..utils import FastQueue
+from .base import BCISignal, DeviceBase
 
 
 class BrainFlowDevice(DeviceBase):

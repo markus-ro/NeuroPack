@@ -1,6 +1,6 @@
 from enum import Enum
 
-from ..container import EventContainer
+from ..containers import EventContainer
 from .signal_components import SignalComponentBase
 
 
