@@ -6,6 +6,7 @@ from brainflow import BrainFlowError
 from brainflow.board_shim import BoardIds, BoardShim, BrainFlowInputParams
 
 from .base import BCISignal, DeviceBase
+from ..utils import FastQueue
 
 
 class BrainFlowDevice(DeviceBase):
@@ -36,7 +37,7 @@ class BrainFlowDevice(DeviceBase):
         super().__init__()
         self.board = None
         self.removal_time_stamp = 0
-        self._average_window = []
+        self._average_window = FastQueue(self.window_size)
         self.board_id = board_id
         self._channels = BoardShim.get_eeg_channels(
             self.board_id.value)
@@ -222,12 +223,13 @@ class BrainFlowDevice(DeviceBase):
         :param sample: sample data points
         :type sample: list
         """
+        # Get maximum value from sample and divide by window size
         max_sign = max([abs(x) for x in sample]) / self.window_size
-        self._average_window.append(max_sign)
         self._signal_avg += max_sign
 
-        if len(self._average_window) > self.window_size:
-            self._signal_avg -= self._average_window.pop(0)
+        overflow = self._average_window.overflow_push(max_sign)
+        if overflow:
+            self._signal_avg -= overflow
 
         if self._signal_avg > 700:
             if self._on_head:

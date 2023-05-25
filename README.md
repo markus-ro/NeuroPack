@@ -42,6 +42,7 @@ The following list contains features I am planning to implement in the future:
 - [ ] Optimize wear detection even more
 - [ ] Support for multiple event markers
 - [ ] Support for more EEG devices
+- [ ] Improve repo structure (KeyWave into separate directory)
 - [X] Support for more elaborate artifact rejection
 - [ ] Tests for artifact rejection
 - [ ] Support for classifiers
