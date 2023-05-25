@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from neuropack import TemplateDatabase
+from neuropack.keywave import TemplateDatabase
 
 
 class TemplateDatabaseTests(unittest.TestCase):
