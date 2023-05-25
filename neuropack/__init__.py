@@ -6,7 +6,7 @@ from typing import Callable, List, Optional, Tuple, Union
 import numpy as np
 from numpy.typing import NDArray
 
-from .container import EEGContainer, EventContainer
+from .container import EEGContainer, EventContainer, LiveEEGContainer
 from .devices.base import DeviceBase
 from .feature_extraction import *
 from .preprocessing import PreprocessingPipeline

@@ -726,11 +726,11 @@ class LiveEEGContainer(EEGContainer):
         x = FastQueue(self.sample_rate)
         y = [FastQueue(self.sample_rate)
              for _ in range(len(self.channel_names))]
+        start = 0
+
         count = 0
         while True:
             count += 1
-            # TODO: This is not a good way to do this. We should use a proper
-            # event loop.
             rec = self.queue.get()
 
             # Stop the process if we get a None
@@ -738,7 +738,10 @@ class LiveEEGContainer(EEGContainer):
                 break
 
             # Add new data
-            x.push(rec.timestamp)
+            if not len(x):
+                start = rec.timestamp
+            x.push(rec.timestamp - start)
+
             for i in range(len(self.channel_names)):
                 y[i].push(rec.signals[i])
 
@@ -749,6 +752,7 @@ class LiveEEGContainer(EEGContainer):
 
             # Plot
             plt.clf()
+            plt.ylim(-1000, 1000)
             for i in range(len(self.channel_names)):
                 plt.plot(x.raw(), y[i].raw(), label=self.channel_names[i])
             plt.grid()
