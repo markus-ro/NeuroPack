@@ -4,8 +4,6 @@ from typing import Callable, List, Optional, Tuple, Union
 import numpy as np
 from numpy.typing import NDArray
 
-from .template_database import TemplateDatabase
-from .operation_modes import TemplateMode, SimilarityMode
 from ..containers import EEGContainer, EventContainer
 from ..devices.base import DeviceBase
 from ..feature_extraction import *
@@ -13,6 +11,8 @@ from ..preprocessing import PreprocessingPipeline
 from ..tasks.base import PersistentTaskBase
 from ..utils import osum
 from ..utils.logging import AuthLogger
+from .operation_modes import SimilarityMode, TemplateMode
+from .template_database import TemplateDatabase
 
 
 class KeyWave():
@@ -226,13 +226,13 @@ class KeyWave():
         # Return true
         return True
 
-    def identification(self,
-                       timeout_s: float = 10,
-                       threshold: Optional[float] = None,
-                       template_mode: Optional[TemplateMode] = None,
-                       similarity_mode: Optional[SimilarityMode] = None) -> Tuple[bool,
-                                                                                  Union[str,
-                                                                                        None]]:
+    def identify(self,
+                 timeout_s: float = 10,
+                 threshold: Optional[float] = None,
+                 template_mode: Optional[TemplateMode] = None,
+                 similarity_mode: Optional[SimilarityMode] = None) -> Tuple[bool,
+                                                                            Union[str,
+                                                                                  None]]:
         """Identify a user using their brainwaves.
 
         :param timeout_s: Maximum time the identification process is allowed to take. defaults to 10

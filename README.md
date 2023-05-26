@@ -42,14 +42,14 @@ The following list contains features I am planning to implement in the future:
 - [X] Optimize wear detection performance
 - [ ] Support for multiple event markers
 - [ ] Support for more EEG devices
-- [ ] Improve repo structure
+- [X] Improve repo structure
 - [X] Support for more elaborate artifact rejection
 - [ ] Tests for artifact rejection
 - [ ] Support for classifiers
 - [ ] Representation learning based on siamese networks
 - [ ] Change graphics backend of tasks
 - [ ] Benchmarking framework
-- [ ] More examples
+- [X] More examples
 
 # References
 [1] O. E. Krigolson, C. C. Williams, A. Norton, C. D. Hassall, and F. L. Colino, “Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research,” Front. Neurosci., vol. 11, Mar. 2017, doi: 10.3389/fnins.2017.00109.

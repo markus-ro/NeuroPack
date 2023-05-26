@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class TemplateMode(Enum):
     """Enum for template mode. Used to determine how templates are stored in the database."""
     AverageTemplate = 1
