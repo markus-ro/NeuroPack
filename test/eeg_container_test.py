@@ -7,7 +7,7 @@ from random import randint
 
 import numpy as np
 
-from neuropack.container import EEGContainer
+from neuropack.containers import EEGContainer
 from neuropack.devices.base import BCISignal
 
 sys.path.append("../")

@@ -1,6 +1,7 @@
+from typing import Union
+
 import numpy as np
 from scipy.ndimage import shift
-from typing import Union
 
 
 class FastQueue():
@@ -36,7 +37,7 @@ class FastQueue():
         if self.head < self.size:
             self.head += 1
             self.data[self.head] = value
-    
+
     def overflow_push(self, value: float) -> Union[float, None]:
         """Inserts an element at the end of the queue. If the queue
         is full, the first element is removed. The removed item is

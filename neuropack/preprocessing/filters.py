@@ -4,7 +4,7 @@ from typing import Union
 import numpy as np
 from scipy.signal import butter, detrend, filtfilt, iirnotch, sosfiltfilt
 
-from ..container import AbstractContainer, EventContainer
+from ..containers import AbstractContainer, EventContainer
 
 
 class FilterBase(ABC):

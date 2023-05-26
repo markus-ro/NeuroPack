@@ -4,7 +4,7 @@ from pathlib import Path
 from time import time
 from typing import Optional
 
-from ..container import EEGContainer
+from ..containers import EEGContainer
 
 
 class AuthLogger():

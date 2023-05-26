@@ -5,7 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 from statsmodels.regression import yule_walker
 
-from .container import EventContainer
+from .containers import EventContainer
 from .utils import normalize_npy
 
 

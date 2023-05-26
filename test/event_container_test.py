@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from neuropack.container import EventContainer
+from neuropack.containers import EventContainer
 from neuropack.utils import osum
 
 

@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from ..container import EEGContainer, EventContainer
+from ..containers import EEGContainer, EventContainer
 from .filters import *
 
 

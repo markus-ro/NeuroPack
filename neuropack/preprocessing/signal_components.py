@@ -2,7 +2,7 @@ from abc import ABC, abstractclassmethod
 
 import numpy as np
 
-from ..container import EventContainer
+from ..containers import EventContainer
 
 
 class SignalComponentBase(ABC):
