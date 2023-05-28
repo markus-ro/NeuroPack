@@ -3,6 +3,7 @@ import csv
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
+from pyedflib import highlevel
 
 from neuropack.devices.base import BCISignal
 
@@ -15,7 +16,7 @@ class EEGContainer(AbstractContainer):
     __slots__ = "events"
 
     @classmethod
-    def from_file(
+    def from_csv(
             cls,
             channel_names: List[str],
             sample_rate: int,
@@ -33,7 +34,31 @@ class EEGContainer(AbstractContainer):
         :type event_marker: str, optional
         """
         t = cls(channel_names, sample_rate)
-        t.load_signals(file, event_marker=event_marker)
+        t.load_csv(file, event_marker=event_marker)
+        return t
+
+    @classmethod
+    def from_edf(
+        cls,
+        channel_names: List[str],
+        sample_rate: int,
+        file: str,
+        time_channel: Union[str, Tuple[str, str]] = None,
+        event_channel: str = None):
+        """Create EEGContainer from EDF file.
+
+        :param channel_names: List of channel names.
+        :type channel_names: List[str]
+        :param sample_rate: Sample rate in Hz.
+        :type sample_rate: int
+        :param file: File containing data.
+        :type file: str
+        :param time_channel: Channel name or list of channel names containing time stamps. If a tuple is provided, the first channel is used as seconds and the second as milliseconds. If None, timestamps are generated from sample rate. Defaults to None.
+        :type time_channel: Union[str, Tuple[str, str]]
+        :param event_channel: Channel name containing event markers. Defaults to None.
+        :type event_channel: str, optional"""
+        t = cls(channel_names, sample_rate)
+        t.load_edf(file, time_channel, event_channel)
         return t
 
     def __init__(self, channel_names: List[str], sample_rate: int) -> None:
@@ -208,7 +233,7 @@ class EEGContainer(AbstractContainer):
         """
         return [self.add_event(x, before, after) for x in self.events]
 
-    def load_signals(self, file_name: str, event_marker: str = "1"):
+    def load_csv(self, file_name: str, event_marker: str = "1"):
         """Load data from a csv file.
         The first col has to be the column with timestamps. Following this,
         the different channels must follow. The last column must contain either a 0, no
@@ -237,6 +262,58 @@ class EEGContainer(AbstractContainer):
                 if line[-1] == event_marker:
                     self.events.append(timestamp)
                 self.add_data(BCISignal(timestamp, signals))
+
+    def load_edf(
+        self,
+        file: str,
+        time_channel: Union[str, Tuple[str, str]] = None,
+        event_channel: str = None):
+        """Load data from an EDF file. If time_channel is None, timestamps are generated from sample rate.
+
+        :param channel_names: List of channel names.
+        :type channel_names: List[str]
+        :param sample_rate: Sample rate in Hz.
+        :type sample_rate: int
+        :param file: File containing data.
+        :type file: str
+        :param time_channel: Channel name or list of channel names containing time stamps. If a tuple is provided, the first channel is used as seconds and the second as milliseconds. If None, timestamps are generated from sample rate. Defaults to None.
+        :type time_channel: Union[str, Tuple[str, str]]
+        :param event_channel: Channel name containing event markers. Defaults to None.
+        :type event_channel: str, optional"""
+        all_channels = self.channel_names
+
+        # Include time channel(s) if provided
+        if time_channel is not None:
+            if isinstance(time_channel, str):
+                all_channels.append(time_channel)
+            else:
+                all_channels.extend(time_channel)
+        
+        # Include event channel if provided
+        if event_channel is not None:
+            all_channels.append(event_channel)
+
+        # Load data from EDF file
+        signals, _, _ = highlevel.read_edf(file, ch_names=all_channels)
+
+        # Create time stamps from time channel(s)
+        if time_channel is not None:
+            self.timestamps = [(1/self.sample_rate) * i for i in range(len(signals[0]))]
+
+        if isinstance(time_channel, str):
+            self.timestamps = signals[all_channels.index(time_channel)]
+        
+        if isinstance(time_channel, tuple):
+            self.timestamps = []
+            fidx = all_channels.index(time_channel[0])
+            sidx = all_channels.index(time_channel[1])
+            self.timestamps = [signals[fidx][i] + signals[sidx][i] / 1000 for i in range(len(signals[0]))]
+        
+        # Add signal data
+        for i in range(len(self.channel_names)):
+            self.signals[i] = signals[all_channels.index(self.channel_names[i])]
+
+        # TODO: Create events from event channel
 
     def save_signals(self, file_name: str, event_marker: str = "1"):
         """Store data in csv format.

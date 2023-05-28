@@ -88,7 +88,7 @@ class EEGContainerTests(unittest.TestCase):
         # action
         container.save_signals(file_name)
         container2 = EEGContainer(["Ch1", "Ch2"], 250)
-        container2.load_signals(file_name)
+        container2.load_csv(file_name)
 
         # check
         self.assertEqual(container, container2,
