@@ -5,7 +5,6 @@ from neuropack.preprocessing import PreprocessingPipeline
 from neuropack.similarity_metrics import bounded_cosine_similarity
 from neuropack.tasks import PersistentColorTask
 
-
 USE_CONT_AUTH = True
 
 # Setup device
