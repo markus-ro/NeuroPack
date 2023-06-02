@@ -9,7 +9,6 @@ To use NeuroPack, simply clone the repository and install the needed dependencie
 ```
 playsound==1.2.2
 play_sounds
-tk
 scipy
 matplotlib
 statsmodels
