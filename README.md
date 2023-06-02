@@ -33,8 +33,37 @@ Examples of how to use the various components of the library can be found in:
 - [Recreation of the recording process described by Krigolson et al. [1]](./examples/P300_Krigolson.ipynb)
 - [Playground for the different ERP acquisition tasks](./examples/tasks.ipynb)
 
+## Examples
+NeuroPack's component can be used in a variety of different use cases. Through prepared utility functions, 
+the library allows for a quick setup and usage. Likewise, the library can be used to implement more complex use cases either by configuring the provided component or by implementing custom ones adhering to the provided interfaces.
+
+### Recording EEG in just a few lines of code
+```python
+from neuropack.devices import BrainFlowDevice
+from neuropack.utils.recording import record
+
+with BrainFlowDevice.CreateMuse2Device() as device:
+    data = record(device, duration_s=15, verbose=True, start_on_wear=True)
+    data.save_signals("recording.csv")
+```
+
+### Load data and apply various preprocessing steps as pipeline
+```python
+from neuropack.preprocessing import PreprocessingPipeline
+from neuropack.preprocessing.filters import DetrendFilter, BandpassFilter
+from neuropack.preprocessing.filters import ReductionFilter
+from neuropack.containers import EEGContainer
+
+pipeline = PreprocessingPipeline(DetrendFilter(), BandpassFilter())
+pipeline.add_filter(ReductionFilter("TP9", "TP10"))
+
+data = EEGContainer.from_file(["TP9", "Fp1", "Fp2", "TP10"], 256, "recording.csv")
+pipeline.apply(data)
+```
+
+
 ## Todo
-The following list contains features I am planning to implement in the future:
+The following list contains features planned for the future:
 - [ ] Broader data file support
 - [X] AudioTask truly multi platform
 - [X] Invisible AudioTask

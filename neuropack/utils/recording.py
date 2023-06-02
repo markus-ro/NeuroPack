@@ -3,7 +3,8 @@ from typing import Union
 
 from ..containers import EEGContainer, LiveEEGContainer
 from ..devices.base import DeviceBase
-from ..tasks.base import TaskBase, PersistentTaskBase
+from ..tasks.base import PersistentTaskBase, TaskBase
+
 
 def __wait_for_wear(device: DeviceBase, verbose: bool = True):
     """Waits for device to be worn.
@@ -19,6 +20,7 @@ def __wait_for_wear(device: DeviceBase, verbose: bool = True):
         pass
     if verbose:
         print("Device is worn.")
+
 
 def record(device: DeviceBase,
            duration_s: int,
@@ -55,7 +57,8 @@ def record(device: DeviceBase,
     assert duration_s > 0, "Duration must be greater than 0."
 
     # Wait for device to be worn
-    if start_on_wear: __wait_for_wear(device, verbose)
+    if start_on_wear:
+        __wait_for_wear(device, verbose)
 
     # Create container
     params = [device.channel_names, device.sample_rate]
@@ -118,11 +121,12 @@ def record_erp(device: DeviceBase,
     assert device.is_connected(), "Device must be connected to record data."
 
     # Wait for device to be worn
-    if start_on_wear: __wait_for_wear(device, verbose)
+    if start_on_wear:
+        __wait_for_wear(device, verbose)
 
     # Start acquisition task
-    acquisition_task.start()
     vprint("Acquisition task started.")
+    acquisition_task.start()
 
     # Start recording
     recording = record(device, duration_s, verbose, False, check_worn)
