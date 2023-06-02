@@ -1,5 +1,5 @@
 from abc import ABC, abstractclassmethod
-from typing import Union
+from typing import Any, Union
 
 import numpy as np
 from scipy.signal import butter, detrend, filtfilt, iirnotch, sosfiltfilt
@@ -9,8 +9,11 @@ from ..containers import AbstractContainer, EventContainer
 
 class FilterBase(ABC):
     @abstractclassmethod
-    def apply(self, data: EventContainer) -> None:
+    def apply(self, data: AbstractContainer) -> None:
         pass
+
+    def __call__(self, data: AbstractContainer) -> None:
+        self.apply(data)
 
 
 class DetrendFilter(FilterBase):
@@ -36,12 +39,12 @@ class DetrendFilter(FilterBase):
 
 
 class HighpassFilter(FilterBase):
-    def __init__(self, cutoff: float, sample_rate: int) -> None:
+    def __init__(self, cutoff: float = 0.1, sample_rate: int = 256) -> None:
         """Highpass filter. Removes low frequency components from data. Uses scipy.signal.butter. See https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html for more information.
 
-        :param cutoff: Frequency cutoff. Frequencies below this value are removed.
+        :param cutoff: Frequency cutoff. Frequencies below this value are removed, defaults to 0.1
         :type cutoff: float
-        :param sample_rate: Sample rate of the data.
+        :param sample_rate: Sample rate of the data, defaults to 256
         :type sample_rate: int
         """
         super().__init__()
@@ -72,12 +75,12 @@ class HighpassFilter(FilterBase):
 
 
 class LowpassFilter(FilterBase):
-    def __init__(self, cutoff: float, sample_rate: int) -> None:
+    def __init__(self, cutoff: float = 30, sample_rate: int = 256) -> None:
         """Lowpass filter. Removes high frequency components from data. Uses scipy.signal.butter. See https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html for more information.
 
-        :param cutoff: Frequency cutoff. Frequencies above this value are removed.
+        :param cutoff: Frequency cutoff. Frequencies above this value are removed, defaults to 30
         :type cutoff: float
-        :param sample_rate: Sample rate of the data.
+        :param sample_rate: Sample rate of the data, defaults to 256
         :type sample_rate: int
         """
         super().__init__()

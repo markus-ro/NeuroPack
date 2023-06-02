@@ -307,3 +307,6 @@ class EEGContainer(AbstractContainer):
                 return False
 
         return True
+
+    def __len__(self):
+        return len(self.timestamps)
