@@ -79,3 +79,12 @@ class DeviceBase(ABC):
         :rtype: bool
         """
         pass
+
+    def __enter__(self):
+        """Connects to device and returns self. This function is used for the with statement."""
+        self.connect()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Disconnects from device. This function is used for the with statement."""
+        self.disconnect()

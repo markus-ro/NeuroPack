@@ -44,6 +44,7 @@ class GraphicTaskBase(TaskBase):
         self._window.configure(background='black')
         self._window.configure(cursor='none')
         self._window.bind("<Escape>", self.__early_stop_call)
+        self._window.update()
 
     def main(self) -> None:
         """Async main loop for tk windows. Otherwise it would keep whole process

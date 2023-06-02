@@ -81,6 +81,7 @@ class BrainFlowDevice(DeviceBase):
         :return: True if connection was successful, False otherwise
         :rtype: bool
         """
+        start = time()
         # Disconnect if already connected
         self.disconnect()
         self._params.timeout = timeout
@@ -99,6 +100,17 @@ class BrainFlowDevice(DeviceBase):
         self._connected = True
         self._gather_thread = Thread(target=self._fetch_data)
         self._gather_thread.start()
+
+        # Wait for window to fill
+        while time() - start < timeout:
+            if self._average_window.is_full():
+                break
+            sleep(0.005)
+        else:
+            if raise_exception:
+                raise Exception("Device could not fetch data.")
+            return False
+
         return True
 
     def disconnect(self):
@@ -239,4 +251,4 @@ class BrainFlowDevice(DeviceBase):
             self._on_head = True
 
     def __del__(self):
-        self.disconnect
+        self.disconnect()
