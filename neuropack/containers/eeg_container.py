@@ -40,12 +40,12 @@ class EEGContainer(AbstractContainer):
 
     @classmethod
     def from_edf(
-        cls,
-        file: str,
-        sample_rate: int,
-        channel_names: List[str],
-        time_channel: Union[str, Tuple[str, str]] = None,
-        event_channel: str = None):
+            cls,
+            file: str,
+            sample_rate: int,
+            channel_names: List[str],
+            time_channel: Union[str, Tuple[str, str]] = None,
+            event_channel: str = None):
         """Create EEGContainer from EDF file.
 
         :param file: File containing data.
@@ -268,10 +268,10 @@ class EEGContainer(AbstractContainer):
                 self.add_data(BCISignal(timestamp, signals))
 
     def load_edf(
-        self,
-        file: str,
-        time_channel: Union[str, Tuple[str, str]] = None,
-        event_channel: str = None):
+            self,
+            file: str,
+            time_channel: Union[str, Tuple[str, str]] = None,
+            event_channel: str = None):
         """Load data from an EDF file. If time_channel is None, timestamps are generated from sample rate.
 
         :param channel_names: List of channel names.
@@ -292,7 +292,7 @@ class EEGContainer(AbstractContainer):
                 all_channels.append(time_channel)
             else:
                 all_channels.extend(time_channel)
-        
+
         # Include event channel if provided
         if event_channel is not None:
             all_channels.append(event_channel)
@@ -302,20 +302,23 @@ class EEGContainer(AbstractContainer):
 
         # Create time stamps from time channel(s)
         if time_channel is None:
-            self.timestamps = [(1/self.sample_rate) * i for i in range(len(signals[0]))]
+            self.timestamps = [(1 / self.sample_rate) *
+                               i for i in range(len(signals[0]))]
 
         if isinstance(time_channel, str):
             self.timestamps = signals[all_channels.index(time_channel)]
-        
+
         if isinstance(time_channel, tuple):
             self.timestamps = []
             fidx = all_channels.index(time_channel[0])
             sidx = all_channels.index(time_channel[1])
-            self.timestamps = [signals[fidx][i] + signals[sidx][i] / 1000 for i in range(len(signals[0]))]
-        
+            self.timestamps = [signals[fidx][i] + signals[sidx]
+                               [i] / 1000 for i in range(len(signals[0]))]
+
         # Add signal data
         for i in range(len(self.channel_names)):
-            self.signals[i] = signals[all_channels.index(self.channel_names[i])]
+            self.signals[i] = signals[all_channels.index(
+                self.channel_names[i])].tolist()
 
         # TODO: Create events from event channel
 
@@ -384,6 +387,3 @@ class EEGContainer(AbstractContainer):
                 return False
 
         return True
-
-    def __len__(self):
-        return len(self.timestamps)

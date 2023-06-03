@@ -12,7 +12,8 @@ class FastQueueTests(unittest.TestCase):
         queue.push(2)
         queue.push(3)
         queue.push(4)
-        self.assertListEqual(queue.data.tolist(), np.array([1, 2, 3, 4], dtype=np.float32).tolist())
+        self.assertListEqual(queue.data.tolist(), np.array(
+            [1, 2, 3, 4], dtype=np.float32).tolist())
 
     def test_overflow(self):
         queue = FastQueue(4)
@@ -21,7 +22,8 @@ class FastQueueTests(unittest.TestCase):
         queue.push(3)
         queue.push(4)
         queue.push(5)
-        self.assertListEqual(queue.data.tolist(), np.array([2, 3, 4, 5], dtype=np.float32).tolist())
+        self.assertListEqual(queue.data.tolist(), np.array(
+            [2, 3, 4, 5], dtype=np.float32).tolist())
 
     def test_overflow_insert(self):
         queue = FastQueue(3)
