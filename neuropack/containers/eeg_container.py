@@ -1,5 +1,6 @@
 import copy
 import csv
+from collections import defaultdict
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
@@ -221,9 +222,12 @@ class EEGContainer(AbstractContainer):
 
         return _t
 
-    def get_all_events(self, before: int, after: int) -> List[EventContainer]:
-        """Get EventContainer representation for all events stored in the container.
+    def get_events(self, event_code: str, before: int,
+                   after: int) -> List[EventContainer]:
+        """Get EventContainer representation for all events with event_code stored in container.
 
+        :param event_code: Event code for which to get all events.
+        :type event_code: str
         :param before: Before duration.
         :type before: int
         :param after: After duration.
@@ -380,3 +384,6 @@ class EEGContainer(AbstractContainer):
                 return False
 
         return True
+
+    def __len__(self):
+        return len(self.timestamps)

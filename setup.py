@@ -16,7 +16,6 @@ setup(
     install_requires=[
         'playsound==1.2.2',
         'play_sounds',
-        'tk',
         'scipy',
         'matplotlib',
         'statsmodels',

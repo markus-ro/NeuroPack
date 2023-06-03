@@ -58,6 +58,14 @@ class FastQueue():
         self.__roll()
         return value
 
+    def is_full(self) -> bool:
+        """Returns True if the queue is full.
+
+        :return: True if the queue is full.
+        :rtype: bool
+        """
+        return self.head == self.size - 1
+
     def raw(self) -> np.ndarray:
         """Returns the raw numpy array.
 
