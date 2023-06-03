@@ -18,18 +18,18 @@ class EEGContainer(AbstractContainer):
     @classmethod
     def from_csv(
             cls,
-            channel_names: List[str],
-            sample_rate: int,
             file: str,
+            sample_rate: int,
+            channel_names: List[str],
             event_marker: str = "1"):
-        """Create EEGContainer from data. Data is expected to be in the following format: <timestamp>, <channels>*n, <target marker?>
+        """Create EEGContainer from data. Data is expected to be in the following format: <timestamp>, <channels>*n, <target marker>
 
-        :param channel_names: List of channel names.
-        :type channel_names: List[str]
-        :param sample_rate: Sample rate in Hz.
-        :type sample_rate: int
         :param file: File containing data.
         :type file: str
+        :param sample_rate: Sample rate in Hz.
+        :type sample_rate: int
+        :param channel_names: List of channel names.
+        :type channel_names: List[str]
         :param event_marker: Marker indicating the start of a new event. Defaults to "1".
         :type event_marker: str, optional
         """
@@ -40,19 +40,19 @@ class EEGContainer(AbstractContainer):
     @classmethod
     def from_edf(
         cls,
-        channel_names: List[str],
-        sample_rate: int,
         file: str,
+        sample_rate: int,
+        channel_names: List[str],
         time_channel: Union[str, Tuple[str, str]] = None,
         event_channel: str = None):
         """Create EEGContainer from EDF file.
 
-        :param channel_names: List of channel names.
-        :type channel_names: List[str]
-        :param sample_rate: Sample rate in Hz.
-        :type sample_rate: int
         :param file: File containing data.
         :type file: str
+        :param sample_rate: Sample rate in Hz.
+        :type sample_rate: int
+        :param channel_names: List of channel names.
+        :type channel_names: List[str]
         :param time_channel: Channel name or list of channel names containing time stamps. If a tuple is provided, the first channel is used as seconds and the second as milliseconds. If None, timestamps are generated from sample rate. Defaults to None.
         :type time_channel: Union[str, Tuple[str, str]]
         :param event_channel: Channel name containing event markers. Defaults to None.
@@ -280,7 +280,7 @@ class EEGContainer(AbstractContainer):
         :type time_channel: Union[str, Tuple[str, str]]
         :param event_channel: Channel name containing event markers. Defaults to None.
         :type event_channel: str, optional"""
-        all_channels = self.channel_names
+        all_channels = self.channel_names.copy()
 
         # Include time channel(s) if provided
         if time_channel is not None:
@@ -297,7 +297,7 @@ class EEGContainer(AbstractContainer):
         signals, _, _ = highlevel.read_edf(file, ch_names=all_channels)
 
         # Create time stamps from time channel(s)
-        if time_channel is not None:
+        if time_channel is None:
             self.timestamps = [(1/self.sample_rate) * i for i in range(len(signals[0]))]
 
         if isinstance(time_channel, str):
