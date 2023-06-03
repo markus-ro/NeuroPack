@@ -2,10 +2,11 @@ import math
 import sys
 import tempfile
 import unittest
-from os import path
+from os import path, remove
 from random import randint
 
 import numpy as np
+from pyedflib import highlevel
 
 from neuropack.containers import EEGContainer
 from neuropack.devices.base import BCISignal
@@ -14,6 +15,11 @@ sys.path.append("../")
 
 
 class EEGContainerTests(unittest.TestCase):
+    def assertListAlmostEqual(self, list1, list2, msg, delta=0.01):
+        self.assertEqual(len(list1), len(list2))
+        for i in range(len(list1)):
+            self.assertAlmostEqual(list1[i], list2[i], delta=delta, msg=msg)
+
     def test_add_values(self):
         """Check, that new EEG signals are correctly added to EEGContainer.
         """
@@ -88,11 +94,93 @@ class EEGContainerTests(unittest.TestCase):
         # action
         container.save_signals(file_name)
         container2 = EEGContainer(["Ch1", "Ch2"], 250)
-        container2.load_signals(file_name)
+        container2.load_csv(file_name)
 
         # check
         self.assertEqual(container, container2,
                          "Loaded signals differ from stored ones.")
+
+    def test_load_edf(self):
+        """Check, that signals can be loaded from edf file.
+        """
+        # arrange
+        file_name = path.join(tempfile.gettempdir(), "test.edf")
+
+        timestamps = [math.pi * (1 / 32) * x for x in range(32)]
+        sin = [math.sin(x) for x in timestamps]
+        cos = [math.cos(x) for x in timestamps]
+        signals = [
+            np.array(
+                sin, dtype=np.float64), np.array(
+                cos, dtype=np.float64), np.array(
+                timestamps, dtype=np.float64)]
+
+        channel_names = ["SIN", "COS", "TIME"]
+
+        signal_headers = highlevel.make_signal_headers(
+            channel_names, sample_rate=32)
+        header = highlevel.make_header(patientname="test")
+        highlevel.write_edf(file_name, signals, signal_headers, header)
+
+        # action
+        container = EEGContainer(["SIN", "COS"], 32)
+        container.load_edf(file_name, "TIME")
+
+        # check
+        self.assertListAlmostEqual(
+            container["SIN"],
+            signals[0].tolist(),
+            "Loaded signals differ from stored ones.")
+        self.assertListAlmostEqual(
+            container["COS"],
+            signals[1].tolist(),
+            "Loaded signals differ from stored ones.")
+        self.assertListAlmostEqual(
+            container.timestamps,
+            signals[2].tolist(),
+            "Loaded timestamps differ from stored ones.")
+
+        # cleanup
+        remove(file_name)
+
+    def test_create_edf(self):
+        """Check, that signals can be loaded from edf file.
+        """
+        # arrange
+        file_name = path.join(tempfile.gettempdir(), "test.edf")
+
+        timestamps = [math.pi * (1 / 32) * x for x in range(32)]
+        sin = [math.sin(x) for x in timestamps]
+        cos = [math.cos(x) for x in timestamps]
+        signals = np.array([sin, cos, timestamps])
+
+        channel_names = ["SIN", "COS", "TIME"]
+
+        signal_headers = highlevel.make_signal_headers(
+            channel_names, sample_rate=32)
+        header = highlevel.make_header(patientname="test")
+        highlevel.write_edf(file_name, signals, signal_headers, header)
+
+        # action
+        container = EEGContainer.from_edf(
+            file_name, 32, ["SIN", "COS"], "TIME")
+
+        # check
+        self.assertListAlmostEqual(
+            container["SIN"],
+            signals[0].tolist(),
+            "Loaded signals differ from stored ones.")
+        self.assertListAlmostEqual(
+            container["COS"],
+            signals[1].tolist(),
+            "Loaded signals differ from stored ones.")
+        self.assertListAlmostEqual(
+            container.timestamps,
+            signals[2].tolist(),
+            "Loaded timestamps differ from stored ones.")
+
+        # cleanup
+        remove(file_name)
 
     def test_numerical_index_access_test(self):
         """Check, that numerical index can be used to access signals.

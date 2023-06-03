@@ -56,7 +56,7 @@ from neuropack.containers import EEGContainer
 pipeline = PreprocessingPipeline(DetrendFilter(), BandpassFilter())
 pipeline.add_filter(ReductionFilter("TP9", "TP10"))
 
-data = EEGContainer.from_file(["TP9", "Fp1", "Fp2", "TP10"], 256, "recording.csv")
+data = EEGContainer.from_file("recording.csv", 256, ["TP9", "Fp1", "Fp2", "TP10"])
 pipeline.apply(data)
 ```
 

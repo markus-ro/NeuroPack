@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from neuropack.benchmarking import FNR, FPR, TNR, TPR
+from neuropack.benchmarking.metrics import FNR, FPR, TNR, TPR
 
 
 class MetricTests(unittest.TestCase):
