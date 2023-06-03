@@ -62,22 +62,23 @@ pipeline.apply(data)
 
 
 ## Todo
-The following list contains features planned for the future:
-- [ ] Broader data file support
+- [X] Improve repo structure
+- [X] Support for more elaborate artifact rejection
+- [X] More examples
 - [X] AudioTask truly multi platform
 - [X] Invisible AudioTask
 - [X] Live plotting of EEG data
 - [X] Optimize wear detection performance
+- [X] Rudimentary EDF file support
 - [ ] Support for multiple event markers
-- [ ] Support for more EEG devices
-- [X] Improve repo structure
-- [X] Support for more elaborate artifact rejection
-- [ ] Tests for artifact rejection
-- [ ] Support for classifiers
+- [ ] Container clean up
+- [ ] Change graphics backend of tasks for better performance on Windows -> PyGame
+- [ ] KeyWave clean up
+- [ ] Classifier support in KeyWave
+- [ ] New artifact rejection in KeyWave
 - [ ] Representation learning based on siamese networks
-- [ ] Change graphics backend of tasks for better performance on windows
+- [ ] Support for more EEG devices
 - [ ] Benchmarking framework
-- [X] More examples
 
 # References
 [1] O. E. Krigolson, C. C. Williams, A. Norton, C. D. Hassall, and F. L. Colino, “Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research,” Front. Neurosci., vol. 11, Mar. 2017, doi: 10.3389/fnins.2017.00109.
