@@ -76,6 +76,7 @@ pipeline.apply(data)
 - [ ] KeyWave clean up
 - [ ] Classifier support in KeyWave
 - [ ] New artifact rejection in KeyWave
+- [ ] Support for storing KeyWave configuration
 - [ ] Representation learning based on siamese networks
 - [ ] Support for more EEG devices
 - [ ] Benchmarking framework
