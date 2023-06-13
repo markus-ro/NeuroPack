@@ -17,7 +17,7 @@ class MarkerVault:
         The marker can be any string, the timestamp must be a number.
         The marker will be added to the timeline, and to the list of markers.
 
-        :param marker: Marker to add, can be any positive number not zero
+        :param marker: Marker to add, can be any number not zero
         :type marker: int
         :param time: Timestamp of the marker, must be a number
         :type time: float
@@ -47,6 +47,7 @@ class MarkerVault:
     def get_timeline(self) -> List[Tuple[float, int]]:
         """Get all markers in chronological order.
         The markers will be sorted in ascending order.
+        Returns a list of (timestamp, marker) tuples.
 
         :return: List of (timestamp, marker) tuples in chronological order
         :rtype: List[Tuple[float, int]]

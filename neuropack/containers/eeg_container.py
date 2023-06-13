@@ -15,7 +15,7 @@ from .event_container import EventContainer
 
 
 class EEGContainer(AbstractContainer):
-    __slots__ = "events"
+    __slots__ = "events", "event_markers"
 
     @classmethod
     def from_csv(
@@ -23,7 +23,7 @@ class EEGContainer(AbstractContainer):
             file: str,
             sample_rate: int,
             channel_names: List[str],
-            event_marker: str = "1"):
+            contains_markers: bool = True):
         """Create EEGContainer from data. Data is expected to be in the following format: <timestamp>, <channels>*n, <target marker>
 
         :param file: File containing data.
@@ -32,11 +32,11 @@ class EEGContainer(AbstractContainer):
         :type sample_rate: int
         :param channel_names: List of channel names.
         :type channel_names: List[str]
-        :param event_marker: Marker indicating the start of a new event. Defaults to "1".
-        :type event_marker: str, optional
+        :param contains_markers: If True, last column is treated as target marker, defaults to False
+        :type contains_markers: bool, optional
         """
         t = cls(channel_names, sample_rate)
-        t.load_csv(file, event_marker=event_marker)
+        t.load_csv(file, contains_markers=contains_markers)
         return t
 
     @classmethod
@@ -46,7 +46,7 @@ class EEGContainer(AbstractContainer):
             sample_rate: int,
             channel_names: List[str],
             time_channel: Union[str, Tuple[str, str]] = None,
-            event_channel: str = None):
+            marker_channel: str = None):
         """Create EEGContainer from EDF file.
 
         :param file: File containing data.
@@ -57,10 +57,10 @@ class EEGContainer(AbstractContainer):
         :type channel_names: List[str]
         :param time_channel: Channel name or list of channel names containing time stamps. If a tuple is provided, the first channel is used as seconds and the second as milliseconds. If None, timestamps are generated from sample rate. Defaults to None.
         :type time_channel: Union[str, Tuple[str, str]]
-        :param event_channel: Channel name containing event markers. Defaults to None.
-        :type event_channel: str, optional"""
+        :param marker_channel: Channel name containing event markers. Defaults to None.
+        :type marker_channel: str, optional"""
         t = cls(channel_names, sample_rate)
-        t.load_edf(file, time_channel, event_channel)
+        t.load_edf(file, time_channel, marker_channel)
         return t
 
     def __init__(self, channel_names: List[str], sample_rate: int) -> None:
@@ -270,7 +270,7 @@ class EEGContainer(AbstractContainer):
 
         return _t
 
-    def load_csv(self, file_name: str, event_marker: str = "1"):
+    def load_csv(self, file_name: str, contains_markers: bool = True):
         """Load data from a csv file.
         The first col has to be the column with timestamps. Following this,
         the different channels must follow. The last column must contain either a 0, no
@@ -282,6 +282,8 @@ class EEGContainer(AbstractContainer):
 
         :param file_name: File name to read from.
         :type file_name: str
+        :param contains_markers: If True, the last column is interpreted as target marker. Defaults to True
+        :type contains_markers: bool, optional
         """
 
         # Reset object before loading new signals
@@ -292,19 +294,28 @@ class EEGContainer(AbstractContainer):
             reader = csv.reader(f, delimiter=",")
             next(reader)
             for line in reader:
-                timestamp = float(line[0])
+                # Skip empty lines
+                if len(line) == 0: continue
+                
+                # Get timestamp and signals
+                t = float(line[0])
                 signals = [float(x)
                            for x in line[1: len(self.channel_names) + 1]]
 
-                if line[-1] == event_marker:
-                    self.events.append(timestamp)
-                self.add_data(BCISignal(timestamp, signals))
+                # Add data
+                self.add_data(BCISignal(t, signals))
+
+                # Check if a marker is present
+                # Has to be done after adding data, because the marker is added to the last timestamp
+                if contains_markers and int(line[-1]) != 0:
+                    self.event_markers.add_marker(int(line[-1]), t)
+                
 
     def load_edf(
             self,
             file: str,
             time_channel: Union[str, Tuple[str, str]] = None,
-            event_channel: str = None):
+            marker_channel: str = None):
         """Load data from an EDF file. If time_channel is None, timestamps are generated from sample rate.
 
         :param channel_names: List of channel names.
@@ -315,8 +326,8 @@ class EEGContainer(AbstractContainer):
         :type file: str
         :param time_channel: Channel name or list of channel names containing time stamps. If a tuple is provided, the first channel is used as seconds and the second as milliseconds. If None, timestamps are generated from sample rate. Defaults to None.
         :type time_channel: Union[str, Tuple[str, str]]
-        :param event_channel: Channel name containing event markers. Defaults to None.
-        :type event_channel: str, optional"""
+        :param marker_channel: Channel name containing event markers. Defaults to None.
+        :type marker_channel: str, optional"""
         all_channels = self.channel_names.copy()
 
         # Include time channel(s) if provided
@@ -327,8 +338,8 @@ class EEGContainer(AbstractContainer):
                 all_channels.extend(time_channel)
 
         # Include event channel if provided
-        if event_channel is not None:
-            all_channels.append(event_channel)
+        if marker_channel is not None:
+            all_channels.append(marker_channel)
 
         # Load data from EDF file
         signals, _, _ = highlevel.read_edf(file, ch_names=all_channels)
@@ -353,9 +364,13 @@ class EEGContainer(AbstractContainer):
             self.signals[i] = signals[all_channels.index(
                 self.channel_names[i])].tolist()
 
-        # TODO: Create events from event channel
+        if marker_channel:
+            markers = signals[all_channels.index(marker_channel)]
+            for i in range(len(markers)):
+                if markers[i] != 0:
+                    self.event_markers.add_marker(markers[i], self.timestamps[i])
 
-    def save_signals(self, file_name: str, event_marker: str = "1"):
+    def save_signals(self, file_name: str):
         """Store data in csv format.
 
         :param file_name: File name to write to.
@@ -363,16 +378,22 @@ class EEGContainer(AbstractContainer):
         :param event_marker: Character to signify an event in saved data. Non-events always get marked with a 0.
         :type file_name: str
         """
-        assert event_marker != "0"
+        timeline = self.event_markers.get_timeline()
 
         with open(file_name, "w", newline='') as f:
             writer = csv.writer(f, delimiter=",")
             writer.writerow(["timestamps"] + self.channel_names + ["Marker"])
 
             for i in range(len(self.timestamps)):
-                timestamp = self.timestamps[i]
-                marker = 1 if timestamp in self.events else 0
-                writer.writerow([timestamp] + [ch[i]
+                t = self.timestamps[i]
+
+                # Check if marker is present
+                marker = 0
+                if len(timeline) and t == timeline[0][0]:
+                    marker = timeline.pop(0)[1]
+                    
+                # Write data
+                writer.writerow([t] + [ch[i]
                                 for ch in self.signals] + [marker])
 
     def shift_timestamps(self):
