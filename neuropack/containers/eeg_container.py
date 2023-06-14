@@ -15,7 +15,7 @@ from .event_container import EventContainer
 
 
 class EEGContainer(AbstractContainer):
-    __slots__ = "events", "event_markers"
+    __slots__ = "event_markers"
 
     @classmethod
     def from_csv(
@@ -76,7 +76,6 @@ class EEGContainer(AbstractContainer):
                 list() for _ in range(
                     len(channel_names))], [])
         self.event_markers = MarkerVault()
-        self.events = []
 
     def add_data(self, rec: BCISignal):
         """Add new measured data point to the container. Data points consist of combinations of
@@ -94,7 +93,7 @@ class EEGContainer(AbstractContainer):
         for i in range(len(rec.signals)):
             self.signals[i].append(rec.signals[i])
 
-    def add_marker(self, marker: str, timestamp_s: int) -> None:
+    def mark_event(self, marker: str, timestamp_s: int) -> None:
         """Marks specific event in time with marker. Markers are stored in a MarkerVault.
         Provided timestamp is altered to match timestamp of the closest data point.
 
@@ -105,7 +104,7 @@ class EEGContainer(AbstractContainer):
         """
         clostest_time_idx = self.__find_closest_timestamp(timestamp_s)
         new_time = self.timestamps[clostest_time_idx]
-        self.event_markers.add_marker(new_time, marker)
+        self.event_markers.add_marker(marker, new_time)
 
     def get_marker(self, marker: str) -> List[float]:
         """Returns list of timestamps for specific marker.
@@ -117,9 +116,10 @@ class EEGContainer(AbstractContainer):
         """
         return self.event_markers.get_marker(marker)
 
-    def get_events(self, marker: str, before: int = 50, after: int = 100) -> List[EventContainer]:
+    def get_events(self, marker: str, before: int = 50,
+                   after: int = 100) -> List[EventContainer]:
         """Returns list of EventContainers for specific marker. EventContainers contain all channels centered around the event.
-        
+
         :param marker: Marker to get events for.
         :type marker: str
         :param before: Duration in milliseconds before the event to include in EventContainer, defaults to 50
@@ -131,55 +131,18 @@ class EEGContainer(AbstractContainer):
             _timestamps = np.array(self.timestamps[b_idx:a_idx])
             _timestamps -= t
             _signals = [np.array(s[b_idx:a_idx]) for s in self.signals]
-            return EventContainer(self.channel_names, self.sample_rate, _signals, _timestamps)
+            return EventContainer(
+                self.channel_names,
+                self.sample_rate,
+                _signals,
+                _timestamps)
 
         events = []
         for t in self.event_markers.get_marker(marker):
             before_idx, after_idx = self.__calc_samples_idx(t, before, after)
             events.append(create_event(t, before_idx, after_idx))
-        
+
         return events
-
-    def add_event(
-            self,
-            event_time: int,
-            before: int = 50,
-            after: int = 100) -> EventContainer:
-        """Adds an event to the recording. Returns EventContainer containing all data for added event.
-
-        :param event_time: Time of event data in the container will be centered around.
-        :type event_time: int
-        :param before: Duration in milliseconds before the event to include in EventContainer, defaults to 50
-        :type before: int
-        :param after: Duration in milliseconds after the event to include in EventContainer, defaults to 100
-        :type after: int
-        :return: EventContainer containing all channels centered around event_time.
-        :rtype: EventContainer
-        """
-        event = self.__find_closest_timestamp(event_time)
-        event_time = self.timestamps[event]
-        if event_time not in self.events:
-            self.events.append(event_time)
-
-        # Calculate number of samples before and after event
-        before_samples = (before * self.sample_rate) // 1000
-        before_samples = max(event - before_samples, 0)
-        after_samples = (after * self.sample_rate) // 1000 + 1
-        after_samples = min(event + after_samples, len(self.timestamps))
-
-        # Create new timestamps and signals
-        new_timestamps = np.array(
-            self.timestamps[before_samples: after_samples])
-        new_timestamps -= event_time
-        new_signals = [np.array(x[before_samples: after_samples])
-                       for x in self.signals]
-
-        # Create new EventContainer
-        return EventContainer(
-            self.channel_names,
-            self.sample_rate,
-            new_signals,
-            new_timestamps)
 
     def average_ch(self, *channel_selection: Optional[List[str]]):
         """Create EEGContainer with an averaged channel.
@@ -295,8 +258,9 @@ class EEGContainer(AbstractContainer):
             next(reader)
             for line in reader:
                 # Skip empty lines
-                if len(line) == 0: continue
-                
+                if len(line) == 0:
+                    continue
+
                 # Get timestamp and signals
                 t = float(line[0])
                 signals = [float(x)
@@ -306,10 +270,10 @@ class EEGContainer(AbstractContainer):
                 self.add_data(BCISignal(t, signals))
 
                 # Check if a marker is present
-                # Has to be done after adding data, because the marker is added to the last timestamp
+                # Has to be done after adding data, because the marker is added
+                # to the last timestamp
                 if contains_markers and int(line[-1]) != 0:
                     self.event_markers.add_marker(int(line[-1]), t)
-                
 
     def load_edf(
             self,
@@ -368,7 +332,8 @@ class EEGContainer(AbstractContainer):
             markers = signals[all_channels.index(marker_channel)]
             for i in range(len(markers)):
                 if markers[i] != 0:
-                    self.event_markers.add_marker(markers[i], self.timestamps[i])
+                    self.event_markers.add_marker(
+                        markers[i], self.timestamps[i])
 
     def save_signals(self, file_name: str):
         """Store data in csv format.
@@ -391,7 +356,7 @@ class EEGContainer(AbstractContainer):
                 marker = 0
                 if len(timeline) and t == timeline[0][0]:
                     marker = timeline.pop(0)[1]
-                    
+
                 # Write data
                 writer.writerow([t] + [ch[i]
                                 for ch in self.signals] + [marker])
@@ -406,7 +371,7 @@ class EEGContainer(AbstractContainer):
 
         first_timestamp = self.timestamps[0]
         self.timestamps = [x - first_timestamp for x in self.timestamps]
-        self.events = [x - first_timestamp for x in self.events]
+        self.event_markers.shift_timestamps(-first_timestamp)
 
     def __find_closest_timestamp(self, timestamp: float) -> float:
         """Finds the index of the closest stored timestamp to provided time stamp.
@@ -420,8 +385,9 @@ class EEGContainer(AbstractContainer):
         timestamp_arr = np.array(self.timestamps)
         return (np.abs(timestamp_arr - timestamp)).argmin()
 
-    def __calc_samples_idx(self, timestamp_s: float, before_ms: int, after_ms: int) -> Tuple[int, int]:
-        """Calculates the start and end index of the samples to be returned. Ensures the event is always always in bound of the recorded data. If the event is too close to the start or end of the recording, the returned ideices are shifted accordingly. Calculates index by converting the provided time in 
+    def __calc_samples_idx(self, timestamp_s: float,
+                           before_ms: int, after_ms: int) -> Tuple[int, int]:
+        """Calculates the start and end index of the samples to be returned. Ensures the event is always always in bound of the recorded data. If the event is too close to the start or end of the recording, the returned ideices are shifted accordingly. Calculates index by converting the provided time in
         milliseconds to samples. This is done by first converting the time in milliseconds to seconds and then multiplying by the sample rate.
 
         :param timestamp_s: Time stamp in seconds.
@@ -455,7 +421,7 @@ class EEGContainer(AbstractContainer):
         if self.timestamps != other.timestamps:
             return False
 
-        if self.events != other.events:
+        if self.event_markers != other.event_markers:
             return False
 
         if len(self.signals) != len(other.signals):

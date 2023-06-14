@@ -461,11 +461,10 @@ class KeyWave():
         # length.
         events = []
         for time_stamp in stimuli_times:
-            event = eeg_container.add_event(
-                time_stamp,
-                self.before_event_time_ms,
-                self.after_event_time_ms)
-            events.append(event)
+            eeg_container.mark_event(1, time_stamp)
+
+        events = eeg_container.get_events(
+            1, self.before_event_time_ms, self.after_event_time_ms)
 
         # Events can possibly be shorter than needed. Remove events which do not have
         # enough data points.

@@ -1,6 +1,7 @@
 from collections import defaultdict
-from heapq import heappush, heappop, nsmallest
+from heapq import heappop, heappush, nsmallest
 from typing import List, Tuple
+
 
 class MarkerVault:
     def __init__(self) -> None:
@@ -9,11 +10,11 @@ class MarkerVault:
         Optimized for fast retrieval of markers, at the cost of memory usage.
         """
         self._markers = defaultdict(list)
-        self._sorted = defaultdict(lambda : False)
+        self._sorted = defaultdict(lambda: False)
         self._timeline = list()
-    
+
     def add_marker(self, marker: int, time: float):
-        """Add a marker with a given timestamp. 
+        """Add a marker with a given timestamp.
         The marker can be any string, the timestamp must be a number.
         The marker will be added to the timeline, and to the list of markers.
 
@@ -29,7 +30,7 @@ class MarkerVault:
         self._markers[marker].append(time)
         self._sorted[marker] = False
         heappush(self._timeline, (time, marker))
-    
+
     def get_marker(self, marker: int) -> List[float]:
         """Get all timestamps for a given marker.
         The timestamps will be sorted in ascending order.
@@ -53,7 +54,27 @@ class MarkerVault:
         :rtype: List[Tuple[float, int]]
         """
         return nsmallest(len(self._timeline), self._timeline)
-    
+
+    def shift_timestamps(self, shift: float):
+        for marker in self._markers:
+            for i in range(len(self._markers[marker])):
+                self._markers[marker][i] += shift
+
+        self._timeline = [(t + shift, m) for t, m in self._timeline]
+
+    def __eq__(self, other: object) -> bool:
+        t = self.get_timeline()
+        o = other.get_timeline()
+
+        if len(t) != len(o):
+            return False
+
+        for i in range(len(t)):
+            if t[i] != o[i]:
+                return False
+
+        return True
+
     def __getitem__(self, marker: int):
         """Get all timestamps for a given marker.
         The timestamps will be sorted in ascending order.

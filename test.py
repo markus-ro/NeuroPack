@@ -9,7 +9,8 @@ channel_names = ["TP9", "AF7", "AF8", "TP10"]
 sample_rate = 256
 
 raw = EEGContainer.from_csv(file_path, sample_rate, channel_names)
-# BandpassFilter(1,30,)(raw)
+raw.shift_timestamps()
+BandpassFilter(1, 30,)(raw)
 
 events = raw.get_events(2, 100, 800)
 average_ev = oavg(events)

@@ -13,6 +13,9 @@ from neuropack.devices.base import BCISignal
 
 sys.path.append("../")
 
+# TODO: tests for shifting
+# TODO: tests for preprocessing
+
 
 class EEGContainerTests(unittest.TestCase):
     def assertListAlmostEqual(self, list1, list2, msg, delta=0.01):
@@ -66,7 +69,8 @@ class EEGContainerTests(unittest.TestCase):
             container.add_data(BCISignal(timestamps[i], [signal[i]]))
 
         # action
-        event = container.add_event(event_time_stamp, 250, 250)
+        container.mark_event(1, event_time_stamp)
+        event = container.get_events(1, 250, 250)[0]
 
         # check
         self.assertEqual(
@@ -89,7 +93,7 @@ class EEGContainerTests(unittest.TestCase):
         signal[125] = 100
         for i in range(250):
             container.add_data(BCISignal(timestamps[i], [signal[i], 5]))
-        container.add_event(event_time_stamp, 250, 250)
+        container.mark_event(1, event_time_stamp)
 
         # action
         container.save_signals(file_name)
@@ -98,7 +102,58 @@ class EEGContainerTests(unittest.TestCase):
 
         # check
         self.assertEqual(container, container2,
-                         "Loaded signals differ from stored ones.")
+                         "Loaded container differ from stored ones.")
+
+    def test_save_signals_multiple_markers(self):
+        """Check, that signals can be saved and loaded in csv format.
+        """
+        # arrange
+        file_name = path.join(tempfile.gettempdir(), "test.csv")
+        container = EEGContainer(["Ch1", "Ch2"], 250)
+        signal = [math.sin(x) for x in range(250)]
+        timestamps = [x * 4 for x in range(250)]
+        event_time_stamp = 500
+        signal[125] = 100
+        for i in range(250):
+            container.add_data(BCISignal(timestamps[i], [signal[i], 5]))
+        container.mark_event(1, event_time_stamp)
+        container.mark_event(2, event_time_stamp + 100)
+
+        # action
+        container.save_signals(file_name)
+        container2 = EEGContainer(["Ch1", "Ch2"], 250)
+        container2.load_csv(file_name)
+
+        # check
+        self.assertEqual(container, container2,
+                         "Loaded container differ from stored ones.")
+
+    def test_out_of_bound_markers(self):
+        """Check, that markers are not added outside of signal range.
+        """
+        # arrange
+        container = EEGContainer(["Ch1", "Ch2"], 250)
+        signal = [math.sin(x) for x in range(250)]
+        timestamps = [x * 4 for x in range(250)]
+        event_time_stamp = 500
+        signal[125] = 100
+        for i in range(250):
+            container.add_data(BCISignal(timestamps[i], [signal[i], 5]))
+
+        # action
+        container.mark_event(1, event_time_stamp)
+        container.mark_event(1, event_time_stamp + 1000)
+
+        # check
+        self.assertEqual(len(container.get_events(1, 250, 250)), 2,
+                         "Expected two events.")
+
+        self.assertEqual(
+            container.get_marker(1)[0],
+            event_time_stamp,
+            "Expected marker at 500.")
+        self.assertEqual(container.get_marker(
+            1)[1], container.timestamps[-1], "Expected marker at last possible timestamp.")
 
     def test_load_edf(self):
         """Check, that signals can be loaded from edf file.

@@ -149,9 +149,7 @@ def record_erp(device: DeviceBase,
     acquisition_task.stop()
     vprint("Acquisition task stopped.")
 
-    # Mark events
-    # TODO update to actually allow for markers and not only events
     for t in event_times:
-        recording.get_events(t, 1, 1)
+        recording.mark_event(1, t)
 
     return recording
