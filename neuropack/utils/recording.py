@@ -92,6 +92,7 @@ def record(device: DeviceBase,
 def record_erp(device: DeviceBase,
                acquisition_task: Union[TaskBase, PersistentTaskBase],
                duration_s: int,
+               marker: int = 1,
                verbose: bool = True,
                start_on_wear: bool = True,
                check_worn: bool = True) -> EEGContainer:
@@ -104,6 +105,8 @@ def record_erp(device: DeviceBase,
     :type acquisition_task: Union[TaskBase, PersistentTaskBase]
     :param duration_s: Duration of recording in seconds
     :type duration_s: int
+    :param marker: Marker to use for ERP analysis
+    :type marker: int
     :param verbose: Print progress to console, defaults to True
     :type verbose: bool, optional
     :param start_on_wear: Start recording when device is worn, defaults to True
@@ -150,6 +153,6 @@ def record_erp(device: DeviceBase,
     vprint("Acquisition task stopped.")
 
     for t in event_times:
-        recording.mark_event(1, t)
+        recording.mark_event(marker, t)
 
     return recording
