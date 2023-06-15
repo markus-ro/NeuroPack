@@ -70,7 +70,7 @@ pipeline.apply(data)
 - [X] Live plotting of EEG data
 - [X] Optimize wear detection performance
 - [X] Rudimentary EDF file support
-- [ ] Support for multiple event markers
+- [X] Support for multiple event markers
 - [ ] Container clean up
 - [ ] Change graphics backend of tasks for better performance on Windows -> PyGame
 - [ ] KeyWave clean up

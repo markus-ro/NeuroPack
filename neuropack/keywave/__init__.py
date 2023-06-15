@@ -13,6 +13,7 @@ from ..utils import osum
 from ..utils.logging import AuthLogger
 from .operation_modes import SimilarityMode, TemplateMode
 from .template_database import TemplateDatabase
+from .auth_exception import AuthException
 
 
 class KeyWave():
@@ -178,7 +179,7 @@ class KeyWave():
         # Get events for recording duration
         try:
             events = self.__perform_task_rec(timeout_s)
-        except Exception as e:
+        except AuthException as e:
             self.last_auth = 0
             self.logger.log_fail(f"Authentication failed \"{e.args}\".")
             return False
@@ -273,7 +274,7 @@ class KeyWave():
         # Get events for recording duration
         try:
             events = self.__perform_task_rec(timeout_s)
-        except Exception as e:
+        except AuthException as e:
             self.logger.log_fail(f"Identification failed \"{e.args}\".")
             return False, None
 
@@ -340,7 +341,7 @@ class KeyWave():
         # Get events for recording duration
         try:
             events = self.__perform_task_rec(timeout_s)
-        except Exception as e:
+        except AuthException as e:
             self.logger.log_fail(f"Enrollment failed \"{e.args}\".")
             return False
 
@@ -413,7 +414,7 @@ class KeyWave():
 
         :param timeout_s: Length of acquisition task.
         :type timeout_s: float
-        :raises Exception: Raises exceptions if anything goes wrong during recording.
+        :raises AuthException: Raises exceptions if anything goes wrong during recording.
         :return: All events (ERPs) recorded during acquisition task.
         :rtype: List[EventContainer]
         """
@@ -432,13 +433,13 @@ class KeyWave():
             if self.device.removal_time_stamp > start or not self.device.is_worn():
                 self.device.stop_stream()
                 self.task.stop()
-                raise Exception("Device not on head")
+                raise AuthException("Device not on head")
 
             # Check, that task was not aborted by user
             if self.task.aborted:
                 if self.task.is_alive():
                     self.task.stop()
-                raise Exception("Task was stopped early")
+                raise AuthException("Task was stopped early")
 
             # Fetch data from device
             if self.device.has_data():
@@ -461,11 +462,10 @@ class KeyWave():
         # length.
         events = []
         for time_stamp in stimuli_times:
-            event = eeg_container.add_event(
-                time_stamp,
-                self.before_event_time_ms,
-                self.after_event_time_ms)
-            events.append(event)
+            eeg_container.mark_event(1, time_stamp)
+
+        events = eeg_container.get_events(
+            1, self.before_event_time_ms, self.after_event_time_ms)
 
         # Events can possibly be shorter than needed. Remove events which do not have
         # enough data points.
@@ -479,7 +479,7 @@ class KeyWave():
                              str(len(eeg_container.timestamps)) +
                              " timestamps")
         self.logger.log_info(
-            "Recorded " + str(len(eeg_container.events)) + " events")
+            "Recorded " + str(len(events)) + " events")
         self.logger.log_recording(eeg_container)
         self.logger.log_info("Task finished")
 

@@ -31,7 +31,7 @@ t = .725
 
 # Create KeyWave instance
 k = KeyWave(device, task, preprocessing, model, database, sim, t)
-
+k.configure_logging(True, False)
 operation_modes = ["enroll", "authenticate", "identify", "stop"]
 
 while True:
