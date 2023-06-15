@@ -94,3 +94,12 @@ class MarkerVaultTests(unittest.TestCase):
         vault2.add_marker(1, 4)
 
         self.assertNotEqual(vault1, vault2)
+
+    def test_len(self):
+        vault = MarkerVault()
+        vault.add_marker(1, 0)
+        vault.add_marker(1, 1)
+        vault.add_marker(2, 2)
+        vault.add_marker(1, 3)
+
+        self.assertEqual(len(vault), 4)

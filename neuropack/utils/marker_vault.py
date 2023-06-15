@@ -75,6 +75,9 @@ class MarkerVault:
 
         return True
 
+    def __len__(self) -> int:
+        return len(self._timeline)
+
     def __getitem__(self, marker: int):
         """Get all timestamps for a given marker.
         The timestamps will be sorted in ascending order.
