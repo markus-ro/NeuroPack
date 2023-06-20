@@ -1,12 +1,14 @@
 import sys
+import pyglet
 from tkinter import Tk
+from screeninfo import get_monitors
 from typing import Callable, List, Optional, Tuple, Union
 
 from . import TaskBase
 
 
 class GraphicTaskBase(TaskBase):
-    __slots__ = "_window", "_early_stop", "_key_pressed"
+    __slots__ = "_window", "_early_stop", "_key_pressed", "screen_width", "screen_height", "key_handler"
 
     def __init__(
             self,
@@ -34,25 +36,28 @@ class GraphicTaskBase(TaskBase):
                          exposure_time, stimuli_record, inter_stim_time)
         self._early_stop = early_stop
         self._key_pressed = False
+        self.screen_width = get_monitors()[0].width
+        self.screen_height = get_monitors()[0].height
 
     def set_up(self) -> None:
-        """Setup tk windows for further graphic displays.
+        """Setup window for further graphic displays.
         """
-        self._window = Tk()
-        self._window.wm_attributes('-fullscreen', True)
-        self._window.wm_attributes("-topmost", True)
-        self._window.configure(background='black')
-        self._window.configure(cursor='none')
-        self._window.bind("<Escape>", self.__early_stop_call)
-        self._window.update()
+        self._window = pyglet.window.Window(self.screen_width, self.screen_height, fullscreen=True)
+        self._window.set_mouse_visible(False)
+        self.key_handler = pyglet.window.key.KeyStateHandler()
+        self._window.push_handlers(self.key_handler)
 
     def main(self) -> None:
         """Async main loop for tk windows. Otherwise it would keep whole process
         busy.
         """
-        self._window.update()
+        self._window.dispatch_events()
+        if self.key_handler[pyglet.window.key.ESCAPE]:
+            self.__early_stop_call()
+            return
+        self._window.flip()
 
-    def __early_stop_call(self, ev):
+    def __early_stop_call(self):
         """Stop task early due to user intervention.
         Task will be stopped at next update or through external intervention.
         """

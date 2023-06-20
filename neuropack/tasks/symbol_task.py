@@ -1,4 +1,4 @@
-import tkinter as tk
+import pyglet
 from random import random
 from time import sleep, time
 from typing import Callable, List, Optional, Tuple, Union
@@ -59,10 +59,18 @@ class SymbolTask(GraphicTaskBase):
         """Add label with instructions to listen to the sounds.
         """
         super().set_up()
-        self._label = tk.Label(self._window, text=self.symbol)
-        self._label.config(bg="black", fg="white", font=("Arial", 512))
-        self._label.pack(side="bottom", fill="both", expand="yes")
-        self._window.update()
+        self._label = pyglet.text.Label(
+            "",
+            font_name="Arial",
+            font_size=512,
+            x=self._window.width // 2,
+            y=self._window.height // 2,
+            anchor_x="center",
+            anchor_y="center",
+            color = (255, 255, 255, 1)
+        )
+        self._label.draw()
+        self._window.flip()
 
     def main(self) -> None:
         """Main loop for task. Takes care of updating picture and send
@@ -73,10 +81,12 @@ class SymbolTask(GraphicTaskBase):
 
         # Update image
         if target:
-            self._label["text"] = self.target_symbol
+            self._label.text = self.target_symbol
         else:
-            self._label["text"] = self.symbol
+            self._label.text = self.symbol
 
+        self._window.clear()
+        self._label.draw()
         super().main()
 
         self._send_stimulus_info(StimuliTime(time(), target))
@@ -85,7 +95,9 @@ class SymbolTask(GraphicTaskBase):
         sleep(self._get_exposure_time())
 
         # Inter wait time
-        self._label["text"] = ""
+        self._label.text = ""
+        self._window.clear()
+        self._label.draw()
         super().main()
         sleep(self._get_inter_stim_time())
 
