@@ -7,9 +7,9 @@ setup(
     license='BSD-3-Clause',
     description='Library to implement prototypes of brainwave-based authentication and to work with brainwaves in general',
     author='Markus Röse',
-    author_email='-',
+    author_email='mroese@mail.uni-paderborn.de',
     url='https://github.com/markus-ro/neuropack',
-    download_url='https://github.com/markus-ro/neuropack/archive/refs/tags/v1.0.tar.gz',
+    download_url='https://github.com/markus-ro/neuropack/archive/refs/tags/r1.0.tar.gz',
     keywords=[
         'EEG',
         'AUTHENTICATION'],
