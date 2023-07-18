@@ -16,6 +16,11 @@ brainflow
 numpy
 ```
 
+Alternatively, you can install the library via pip:
+```bash
+pip install neuropack
+```
+
 ## Usage
 The library itself is seperated into several modules containing different components used for brainwave-based authentication.
 These modules are:
