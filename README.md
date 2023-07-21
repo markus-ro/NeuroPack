@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause) [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)]() [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/) [![status: experimental](https://github.com/GIScience/badges/raw/master/status/experimental.svg)](https://github.com/GIScience/badges#experimental)
 
-Simple library to implement prototypes of brainwave-based authentication in Python. Further, it allows for the general usage of brainwave data in Python. I wrote this library as part of my master thesis. At the time of submission, the future of it was uncertain. Hence, I decided to publish it and provide some missing features. If you come across this library and find it useful, feel free to use it and contribute if you like. Currently all graphic components of the library are based on tkinter, which apparently is slow on windows.
+Simple library to implement prototypes of brainwave-based authentication in Python. Further, it allows for the general usage of brainwave data in Python. I wrote this library as part of my master thesis. If you come across this library and find it useful, feel free to use it and contribute if you like. Currently all graphic components of the library are based on tkinter, which apparently is slow on windows.
 
 ## Installation
 To use NeuroPack, simply clone the repository and install the needed dependencies via pip:
@@ -14,6 +14,11 @@ matplotlib
 statsmodels
 brainflow
 numpy
+```
+
+Alternatively, you can install the library via pip:
+```bash
+pip install neuropack
 ```
 
 ## Usage
@@ -59,26 +64,6 @@ pipeline.add_filter(ReductionFilter("TP9", "TP10"))
 data = EEGContainer.from_file("recording.csv", 256, ["TP9", "Fp1", "Fp2", "TP10"])
 pipeline.apply(data)
 ```
-
-
-## Todo
-- [X] Improve repo structure
-- [X] Support for more elaborate artifact rejection
-- [X] More examples
-- [X] AudioTask truly multi platform
-- [X] Invisible AudioTask
-- [X] Live plotting of EEG data
-- [X] Optimize wear detection performance
-- [X] Rudimentary EDF file support
-- [X] Support for multiple event markers
-- [ ] Container clean up
-- [ ] Change graphics backend of tasks for better performance on Windows -> PyGame
-- [ ] KeyWave clean up
-- [ ] Classifier support in KeyWave
-- [ ] New artifact rejection in KeyWave
-- [ ] Representation learning based on siamese networks
-- [ ] Support for more EEG devices
-- [ ] Benchmarking framework
 
 # References
 [1] O. E. Krigolson, C. C. Williams, A. Norton, C. D. Hassall, and F. L. Colino, “Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research,” Front. Neurosci., vol. 11, Mar. 2017, doi: 10.3389/fnins.2017.00109.

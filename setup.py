@@ -9,7 +9,7 @@ setup(
     author='Markus Röse',
     author_email='mroese@mail.uni-paderborn.de',
     url='https://github.com/markus-ro/neuropack',
-    download_url='https://github.com/markus-ro/neuropack/archive/refs/tags/v1.tar.gz',
+    download_url='https://github.com/markus-ro/neuropack/archive/refs/tags/r1.0.tar.gz',
     keywords=[
         'EEG',
         'AUTHENTICATION'],
@@ -20,7 +20,8 @@ setup(
         'matplotlib',
         'statsmodels',
         'brainflow',
-        'numpy'],
+        'numpy',
+        "pyEDFlib"],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
