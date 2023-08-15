@@ -5,18 +5,14 @@
 Simple library to implement prototypes of brainwave-based authentication in Python. Further, it allows for the general usage of brainwave data in Python. I wrote this library as part of my master thesis. If you come across this library and find it useful, feel free to use it and contribute if you like. Currently all graphic components of the library are based on tkinter, which apparently is slow on windows.
 
 ## Installation
-To use NeuroPack, simply clone the repository and install the needed dependencies via pip:
-```
-playsound==1.2.2
-play_sounds
-scipy
-matplotlib
-statsmodels
-brainflow
-numpy
-```
+You can install NeuroPack directly from source:
+```bash
+git clone https://github.com/markus-ro/neuropack/
+cd neuropack
+python -m pip install .
+``` 
 
-Alternatively, you can install the library via pip:
+Alternatively, you can install NeuroPack via pip:
 ```bash
 pip install neuropack
 ```

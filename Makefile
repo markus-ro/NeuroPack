@@ -9,3 +9,7 @@ clean:
 	rm -rf **/__pycache__
 	rm -rf **/*.egg-info
 	rm -rf dist
+
+format:
+	python -m autopep8 -r -a -a --in-place .
+	python -m isort .
