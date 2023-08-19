@@ -11,9 +11,9 @@ from ..preprocessing import PreprocessingPipeline
 from ..tasks.base import PersistentTaskBase
 from ..utils import osum
 from ..utils.logging import AuthLogger
+from .auth_exception import AuthException
 from .operation_modes import SimilarityMode, TemplateMode
 from .template_database import TemplateDatabase
-from .auth_exception import AuthException
 
 
 class KeyWave():
