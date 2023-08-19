@@ -61,5 +61,30 @@ data = EEGContainer.from_file("recording.csv", 256, ["TP9", "Fp1", "Fp2", "TP10"
 pipeline.apply(data)
 ```
 
+### Using KeyWave, an end-to-end implementation of brainwave-based authentication
+```python
+from neuropack.devices import BrainFlowDevice
+from neuropack.feature_extraction import BandpowerModel
+from neuropack.keywave import KeyWave, TemplateDatabase
+from neuropack.preprocessing import PreprocessingPipeline
+from neuropack.similarity_metrics import bounded_cosine_similarity
+from neuropack.tasks import PersistentColorTask
+
+device  = BrainFlowDevice.CreateMuse2Device()
+device.connect()
+
+task = PersistentColorTask(3, 5, "green", "blue", 200, inter_stim_time=300)
+
+k = KeyWave(device, task, PreprocessingPipeline(), BandpowerModel(), TemplateDatabase(), bounded_cosine_similarity, .75)
+
+k.enroll("Hari Seldon")
+
+if k.authenticate("Hari Seldon"):
+    print("User authenticated")
+```
+
+### Integration into applications
+An example of how NeuroPack, or more specific KeyWave, can be integrated into an application can be found in the form of the [Foundation Password Manager](https://github.com/markus-ro/fpm).
+
 # References
 [1] O. E. Krigolson, C. C. Williams, A. Norton, C. D. Hassall, and F. L. Colino, “Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research,” Front. Neurosci., vol. 11, Mar. 2017, doi: 10.3389/fnins.2017.00109.
