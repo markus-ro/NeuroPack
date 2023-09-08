@@ -88,3 +88,6 @@ An example of how NeuroPack, or more specific KeyWave, can be integrated into an
 
 # References
 [1] O. E. Krigolson, C. C. Williams, A. Norton, C. D. Hassall, and F. L. Colino, “Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research,” Front. Neurosci., vol. 11, Mar. 2017, doi: 10.3389/fnins.2017.00109.
+
+# License
+This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
