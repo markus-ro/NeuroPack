@@ -1,6 +1,6 @@
-# NeuroPack
+# <b>Neuro</b>logics<b>Pack</b>age
 
-[![License](https://img.shields.io/badge/License-BSD_3--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause) [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)]() [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/) [![status: experimental](https://github.com/GIScience/badges/raw/master/status/experimental.svg)](https://github.com/GIScience/badges#experimental) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8327549.svg)](https://doi.org/10.5281/zenodo.8161773)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)]() [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/) [![status: experimental](https://github.com/GIScience/badges/raw/master/status/experimental.svg)](https://github.com/GIScience/badges#experimental) [![License](https://img.shields.io/badge/License-BSD_3--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause) 
 
 
 Simple library to implement prototypes of brainwave-based authentication in Python. Further, it allows for the general usage of brainwave data in Python. I wrote this library as part of my master thesis. If you come across this library and find it useful, feel free to use it and contribute if you like. Currently all graphic components of the library are based on tkinter, which apparently is slow on windows.
@@ -85,10 +85,7 @@ if k.authenticate("Hari Seldon"):
 ```
 
 ### Integration into applications
-An example of how NeuroPack, or more specific KeyWave, can be integrated into an application can be found in the form of the [Foundation Password Manager](https://github.com/markus-ro/fpm).
+An example of how to use the package, or more specific KeyWave, can be integrated into an application can be found in the form of the [Foundation Password Manager](https://github.com/markus-ro/fpm).
 
 # References
 [1] O. E. Krigolson, C. C. Williams, A. Norton, C. D. Hassall, and F. L. Colino, “Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research,” Front. Neurosci., vol. 11, Mar. 2017, doi: 10.3389/fnins.2017.00109.
-
-# License
-This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
