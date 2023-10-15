@@ -8,14 +8,19 @@ Simple library to implement prototypes of brainwave-based authentication in Pyth
 If you use this repository, please cite the paper as follows:
 ```
 @inproceedings{roese2023overcoming,
-  title={Overcoming Theory: Designing Brainwave Authentication for the Real World},
-  author={R\"ose, Markus and Kablo, Emiram and Arias-Cabarcos, Patricia},
-  booktitle={The 2023 European Symposium on Usable Security (EuroUSEC 2023)},
-  address={Copenhagen, Denmark},
-  publisher={ACM, New York, NY, USA},
-  month={October 16--17}
-  doi={110.1145/3617072.3617120},
-  year={2023}
+    author = {R\"{o}se, Markus and Kablo, Emiram and Arias-Cabarcos, Patricia},
+    title = {Overcoming Theory: Designing Brainwave Authentication for the Real World},
+    year = {2023},
+    isbn = {9798400708145},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3617072.3617120},
+    doi = {10.1145/3617072.3617120},
+    booktitle = {Proceedings of the 2023 European Symposium on Usable Security},
+    pages = {175–191},
+    numpages = {17},
+    location = {Copenhagen, Denmark},
+    series = {EuroUSEC '23}
 }
 ```
 
